@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: RUTAS_PHOTOGRAPHY_WEB_SERVER
+    volumes:
+      - ./server/src:/usr/src/app
+      - ./server/src/node_modules:/usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - '9000:9000'
+    networks:
+      - rutas-photography-web
+
+  db:
+    image: 'mongo'
+    container_name: RUTAS_PHOTOGRAPHY_WEB_DATABASE
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./server/data/db:/usr/data/db
+    networks:
+      - rutas-photography-web
+
+  client:
+    tty: true
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: RUTAS_PHOTOGRAPHY_WEB_CLIENT
+    volumes:
+      - ./client/:/usr/app
+      - ./client/node_modules:/usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - rutas-photography-web
+
+networks:
+    rutas-photography-web:
+        driver: bridge
