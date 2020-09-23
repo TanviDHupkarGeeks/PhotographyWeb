@@ -1,4 +1,4 @@
-# Ruta's Photography
+
 
 ## Getting Started
 
